@@ -1,0 +1,43 @@
+Sarah Johnson - Software Engineer
+
+Contact:
+sarah.johnson@email.com | (555) 987-6543
+Portfolio: github.com/sarahjohnson
+
+Summary:
+Full-stack software engineer with 4 years of experience in web development, mobile applications, and cloud technologies. Expertise in JavaScript, React, Node.js, and modern development practices.
+
+Technical Skills:
+- Frontend: React, Vue.js, Angular, HTML5, CSS3, JavaScript, TypeScript
+- Backend: Node.js, Express.js, Python, Django, REST APIs
+- Databases: MongoDB, PostgreSQL, Redis
+- Cloud: AWS, Docker, Kubernetes
+- Tools: Git, Jenkins, Jest, Webpack
+
+Experience:
+
+Software Engineer | WebTech Solutions | 2021 - Present
+• Developed responsive web applications using React and Node.js
+• Implemented microservices architecture reducing system latency by 40%
+• Built RESTful APIs serving over 1 million requests daily
+• Collaborated with UX designers to create intuitive user interfaces
+• Mentored junior developers and conducted code reviews
+
+Frontend Developer | StartupCo | 2020 - 2021
+• Created single-page applications using Vue.js and modern JavaScript
+• Optimized application performance achieving 90+ Lighthouse scores
+• Integrated third-party APIs and payment processing systems
+• Participated in agile development processes and sprint planning
+
+Junior Developer | Digital Agency | 2019 - 2020
+• Built responsive websites using HTML, CSS, and JavaScript
+• Assisted in mobile app development using React Native
+• Learned modern development frameworks and best practices
+
+Education:
+Bachelor of Computer Science | Tech University | 2019
+
+Projects:
+• E-commerce Platform: Full-stack application with payment processing
+• Task Management App: React-based productivity application
+• Weather Dashboard: Real-time weather data visualization

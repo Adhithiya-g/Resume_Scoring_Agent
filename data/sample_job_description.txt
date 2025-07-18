@@ -1,0 +1,47 @@
+We are seeking a Senior Data Scientist to join our growing analytics team. The ideal candidate will have strong expertise in machine learning, statistical analysis, and data visualization.
+
+Key Responsibilities:
+• Develop and implement machine learning models to solve complex business problems
+• Analyze large datasets to extract meaningful insights and patterns
+• Create predictive models for forecasting and optimization
+• Collaborate with cross-functional teams to translate business requirements into technical solutions
+• Present findings and recommendations to stakeholders and senior management
+• Mentor junior team members and contribute to best practices
+
+Required Qualifications:
+• Master's degree in Data Science, Statistics, Computer Science, or related field
+• 3+ years of experience in data science or analytics roles
+• Proficiency in Python and R programming languages
+• Experience with machine learning frameworks (scikit-learn, TensorFlow, PyTorch)
+• Strong knowledge of statistical analysis and hypothesis testing
+• Experience with SQL and database management
+• Familiarity with data visualization tools (Tableau, Power BI, matplotlib)
+• Knowledge of cloud platforms (AWS, Azure, GCP)
+
+Preferred Qualifications:
+• PhD in a quantitative field
+• Experience with big data technologies (Spark, Hadoop)
+• Knowledge of deep learning and neural networks
+• Experience with A/B testing and experimental design
+• Strong communication and presentation skills
+• Experience in the financial services or technology industry
+
+Technical Skills Required:
+- Programming: Python, R, SQL
+- Machine Learning: Regression, Classification, Clustering, Time Series Analysis
+- Libraries: Pandas, NumPy, Scikit-learn, TensorFlow, Keras
+- Databases: PostgreSQL, MongoDB, Redis
+- Cloud: AWS (S3, EC2, SageMaker), Azure ML
+- Visualization: Tableau, Power BI, Matplotlib, Seaborn
+- Tools: Jupyter Notebooks, Git, Docker
+
+What We Offer:
+• Competitive salary and equity package
+• Comprehensive health, dental, and vision insurance
+• Flexible work arrangements and remote work options
+• Professional development opportunities and conference attendance
+• Collaborative and innovative work environment
+• Opportunity to work on cutting-edge projects with real business impact
+
+About Our Company:
+We are a fast-growing technology company focused on leveraging data to drive business decisions. Our data science team works on diverse projects ranging from customer analytics to operational optimization, using the latest tools and techniques in machine learning and artificial intelligence.
