@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 st.set_page_config(
-    page_title="Resume Score Analyser Agent",
+    page_title="Resume Scoring Agent",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -134,7 +134,7 @@ class ResumeAgent:
     
     def render_header(self):
         """Render the application header"""
-        st.markdown('<h1 class="main-header">📄 Resume Scoring Analyser Agent</h1>', unsafe_allow_html=True)
+        st.markdown('<h1 class="main-header">📄 Resume Scoring Agent</h1>', unsafe_allow_html=True)
         st.markdown("""
         <div style="text-align: center; margin-bottom: 2rem;">
             <p style="font-size: 1.2rem; color: #666;">
