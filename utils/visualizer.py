@@ -41,13 +41,13 @@ class ResumeVisualizer:
         plt.rcParams['figure.figsize'] = (12, 8)
         plt.rcParams['font.size'] = 10
         
-        # Color schemes
+        # Color schemes - Updated for better visual appeal
         self.colors = {
-            'primary': '#2E86AB',
-            'secondary': '#A23B72',
-            'success': '#F18F01',
-            'warning': '#C73E1D',
-            'background': '#F5F5F5'
+            'primary': '#1E3A8A',      # Professional Dark Blue
+            'secondary': '#3B82F6',    # Bright Blue  
+            'success': '#10B981',      # Emerald Green
+            'warning': '#F59E0B',      # Amber Orange
+            'background': '#F8FAFC'    # Light Gray Background
         }
     
     def create_similarity_bar_chart(self, 
@@ -453,15 +453,26 @@ class ResumeVisualizer:
         return fig
     
     def _get_score_color(self, score: float) -> str:
-        """Get color based on score value"""
-        if score >= 0.8:
-            return self.colors['success']
-        elif score >= 0.6:
-            return self.colors['primary']
-        elif score >= 0.4:
-            return self.colors['secondary']
-        else:
-            return self.colors['warning']
+        """Get color based on score value (works with both decimal and percentage scores)"""
+        # Handle both percentage (0-100) and decimal (0-1) scores
+        if score > 1:  # Percentage score
+            if score >= 60:
+                return self.colors['success']    # Emerald for excellent
+            elif score >= 40:
+                return self.colors['primary']    # Dark blue for good
+            elif score >= 20:
+                return self.colors['secondary']  # Blue for average
+            else:
+                return self.colors['warning']    # Amber for below average
+        else:  # Decimal score
+            if score >= 0.6:
+                return self.colors['success']
+            elif score >= 0.4:
+                return self.colors['primary']
+            elif score >= 0.2:
+                return self.colors['secondary']
+            else:
+                return self.colors['warning']
     
     def _categorize_scores(self, scores: List[float]) -> Dict[str, int]:
         """Categorize scores into performance tiers"""

@@ -1,8 +1,3 @@
-"""
-Text Preprocessing Module for Resume Scoring Agent
-Handles cleaning, tokenization, and NLP preprocessing
-"""
-
 import re
 import string
 import logging
@@ -11,25 +6,42 @@ import nltk
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 import pandas as pd
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Download required NLTK data
 try:
     nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
+except (LookupError, Exception):
+    try:
+        nltk.download('punkt')
+    except:
+        pass
+
+try:
+    nltk.data.find('tokenizers/punkt_tab')
+except (LookupError, Exception):
+    try:
+        nltk.download('punkt_tab')
+    except:
+        pass
 
 try:
     nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
+except (LookupError, Exception):
+    try:
+        nltk.download('stopwords')
+    except:
+        pass
 
 try:
     nltk.data.find('corpora/wordnet')
-except LookupError:
-    nltk.download('wordnet')
+except (LookupError, Exception):
+    try:
+        nltk.download('wordnet')
+    except:
+        pass
+
+# Removed omw-1.4 check as it causes BadZipFile errors
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
@@ -37,7 +49,6 @@ from nltk.stem import WordNetLemmatizer, PorterStemmer
 
 
 class TextPreprocessor:
-    """Handles comprehensive text preprocessing for resume and job description analysis"""
     
     def __init__(self, 
                  use_spacy: bool = True,
@@ -45,24 +56,33 @@ class TextPreprocessor:
                  use_lemmatization: bool = True,
                  min_word_length: int = 2,
                  custom_stopwords: Optional[Set[str]] = None):
-        """
-        Initialize the text preprocessor
-        
-        Args:
-            use_spacy: Whether to use spaCy for advanced NLP
-            remove_stopwords: Whether to remove stopwords
-            use_lemmatization: Whether to use lemmatization (vs stemming)
-            min_word_length: Minimum word length to keep
-            custom_stopwords: Additional stopwords to remove
-        """
         self.use_spacy = use_spacy
         self.remove_stopwords = remove_stopwords
         self.use_lemmatization = use_lemmatization
         self.min_word_length = min_word_length
         
-        # Initialize stopwords
-        self.stop_words = set(stopwords.words('english'))
-        self.stop_words.update(ENGLISH_STOP_WORDS)
+        # Initialize stopwords with fallback
+        self.stop_words = set()
+        try:
+            self.stop_words = set(stopwords.words('english'))
+        except:
+            # Fallback stopwords if NLTK data not available
+            self.stop_words = {
+                'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours',
+                'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers',
+                'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
+                'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
+                'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does',
+                'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
+                'while', 'of', 'at', 'by', 'for', 'with', 'through', 'during', 'before', 'after',
+                'above', 'below', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
+                'further', 'then', 'once'
+            }
+        
+        try:
+            self.stop_words.update(ENGLISH_STOP_WORDS)
+        except:
+            pass
         
         # Add custom stopwords
         if custom_stopwords:
@@ -137,20 +157,18 @@ class TextPreprocessor:
         return re.sub(r'\b\d+\b', '', text)
     
     def tokenize(self, text: str) -> List[str]:
-        """
-        Tokenize text into words
-        
-        Args:
-            text: Text to tokenize
-            
-        Returns:
-            List of tokens
-        """
         if self.use_spacy and self.nlp:
             doc = self.nlp(text)
             return [token.text for token in doc if not token.is_punct and not token.is_space]
         else:
-            return word_tokenize(text)
+            try:
+                return word_tokenize(text)
+            except LookupError:
+                # Fallback to simple split if NLTK data is not available
+                import re
+                # Simple tokenization as fallback
+                tokens = re.findall(r'\b\w+\b', text.lower())
+                return tokens
     
     def remove_stopwords_from_tokens(self, tokens: List[str]) -> List[str]:
         """
@@ -324,18 +342,7 @@ class TextPreprocessor:
             return tokens
     
     def preprocess_simple(self, text: str) -> str:
-        """
-        Simplified preprocessing for better similarity scoring
-        Follows the exact specification for optimal TF-IDF performance
-        
-        Args:
-            text: Raw text to preprocess
-            
-        Returns:
-            Preprocessed text string
-        """
         import re
-        from nltk.corpus import stopwords
         
         if not text or not text.strip():
             return ""
@@ -351,8 +358,26 @@ class TextPreprocessor:
         
         # Tokenize and remove stopwords
         tokens = text.split()
-        english_stopwords = set(stopwords.words('english'))
-        tokens = [word for word in tokens if word not in english_stopwords]
+        
+        # Use fallback stopwords if NLTK data is not available
+        try:
+            from nltk.corpus import stopwords
+            english_stopwords = set(stopwords.words('english'))
+        except:
+            # Fallback basic stopwords list
+            english_stopwords = {
+                'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours',
+                'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers',
+                'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
+                'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
+                'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does',
+                'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
+                'while', 'of', 'at', 'by', 'for', 'with', 'through', 'during', 'before', 'after',
+                'above', 'below', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
+                'further', 'then', 'once'
+            }
+        
+        tokens = [word for word in tokens if word not in english_stopwords and len(word) > 2]
         
         return ' '.join(tokens)
     

@@ -1,8 +1,3 @@
-"""
-Resume Scoring AI Agent - Main Streamlit Application
-A sophisticated AI-powered resume scoring system using TF-IDF and Cosine Similarity
-"""
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -14,25 +9,53 @@ import os
 from typing import Dict, List, Tuple, Any, Optional
 import logging
 
-# Import utility modules
 from utils.extractor import TextExtractor, extract_multiple_resumes
 from utils.preprocessor import TextPreprocessor
 from utils.scorer import ResumeScorer, score_resumes_pipeline
 from utils.visualizer import ResumeVisualizer
 
-# Configure logging
+def ensure_nltk_data():
+    """Ensure NLTK data is available"""
+    import nltk
+    import os
+    
+    # Set NLTK data path for deployment environments
+    nltk_data_dir = os.path.expanduser('~/nltk_data')
+    if not os.path.exists(nltk_data_dir):
+        os.makedirs(nltk_data_dir, exist_ok=True)
+    
+    nltk.data.path.append(nltk_data_dir)
+    
+    required_data = [
+        ('tokenizers/punkt', 'punkt'),
+        ('tokenizers/punkt_tab', 'punkt_tab'), 
+        ('corpora/stopwords', 'stopwords'),
+        ('corpora/wordnet', 'wordnet'),
+        ('corpora/omw-1.4', 'omw-1.4')
+    ]
+    
+    for path, name in required_data:
+        try:
+            nltk.data.find(path)
+        except LookupError:
+            try:
+                print(f"Downloading NLTK data: {name}")
+                nltk.download(name, quiet=True)
+            except Exception as e:
+                print(f"Warning: Could not download {name}: {e}")
+                continue  # Continue if download fails
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Configure Streamlit page
+
 st.set_page_config(
-    page_title="Resume Scoring AI Agent",
+    page_title="Resume Score Analyser Agent",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
 st.markdown("""
 <style>
     .main-header {
@@ -103,7 +126,7 @@ class ResumeAgent:
             st.session_state.scoring_results = None
         if 'preprocessor_config' not in st.session_state:
             st.session_state.preprocessor_config = {
-                'use_spacy': False,  # Set to False by default to avoid dependency issues
+                'use_spacy': False, 
                 'remove_stopwords': True,
                 'use_lemmatization': True,
                 'min_word_length': 2
@@ -111,7 +134,7 @@ class ResumeAgent:
     
     def render_header(self):
         """Render the application header"""
-        st.markdown('<h1 class="main-header">📄 Resume Scoring AI Agent</h1>', unsafe_allow_html=True)
+        st.markdown('<h1 class="main-header">📄 Resume Scoring Analyser Agent</h1>', unsafe_allow_html=True)
         st.markdown("""
         <div style="text-align: center; margin-bottom: 2rem;">
             <p style="font-size: 1.2rem; color: #666;">
@@ -767,6 +790,13 @@ class ResumeAgent:
 def main():
     """Main function to run the Streamlit app"""
     try:
+        # Ensure NLTK data is available
+        try:
+            ensure_nltk_data()
+        except Exception as nltk_error:
+            st.warning(f"NLTK data setup warning: {nltk_error}")
+            logger.warning(f"NLTK data setup warning: {nltk_error}")
+        
         agent = ResumeAgent()
         agent.run()
     except Exception as e:

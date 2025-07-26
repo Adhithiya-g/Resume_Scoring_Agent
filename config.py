@@ -1,15 +1,9 @@
-"""
-Configuration and Setup Module for Resume Scoring Agent
-"""
-
 import os
 import sys
 import logging
 from pathlib import Path
 
-# Configure logging
 def setup_logging(log_level="INFO"):
-    """Setup logging configuration"""
     logging.basicConfig(
         level=getattr(logging, log_level.upper()),
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -19,15 +13,13 @@ def setup_logging(log_level="INFO"):
         ]
     )
 
-# Project paths
 PROJECT_ROOT = Path(__file__).parent
 DATA_DIR = PROJECT_ROOT / "data"
 SAMPLE_RESUMES_DIR = DATA_DIR / "sample_resumes"
 UTILS_DIR = PROJECT_ROOT / "utils"
 
-# Default configurations
 DEFAULT_PREPROCESSOR_CONFIG = {
-    'use_spacy': False,  # Set to False to avoid spaCy dependency issues
+    'use_spacy': False,
     'remove_stopwords': True,
     'use_lemmatization': True,
     'min_word_length': 2,
@@ -52,7 +44,6 @@ DEFAULT_VISUALIZATION_CONFIG = {
     'top_n_display': 15
 }
 
-# File type configurations
 SUPPORTED_FILE_TYPES = {
     'pdf': ['.pdf'],
     'word': ['.docx', '.doc'],
@@ -60,20 +51,17 @@ SUPPORTED_FILE_TYPES = {
 }
 
 def get_all_supported_extensions():
-    """Get all supported file extensions"""
     extensions = []
     for file_type, exts in SUPPORTED_FILE_TYPES.items():
         extensions.extend(exts)
     return extensions
 
 def ensure_directories():
-    """Ensure all required directories exist"""
     directories = [DATA_DIR, SAMPLE_RESUMES_DIR]
     for directory in directories:
         directory.mkdir(parents=True, exist_ok=True)
 
 def check_dependencies():
-    """Check if all required dependencies are installed"""
     required_packages = [
         'streamlit', 'pandas', 'numpy', 'scikit-learn',
         'nltk', 'matplotlib', 'plotly', 'seaborn',
@@ -89,36 +77,72 @@ def check_dependencies():
     
     return missing_packages
 
+def clean_corrupted_nltk_data():
+    """Clean up corrupted NLTK data files"""
+    import nltk
+    import os
+    import shutil
+    
+    print("Cleaning up potentially corrupted NLTK data...")
+    
+    # Get NLTK data directory
+    nltk_data_dir = os.path.expanduser('~/nltk_data')
+    
+    # Remove potentially corrupted files
+    corrupted_files = [
+        os.path.join(nltk_data_dir, 'corpora', 'omw-1.4.zip'),
+        os.path.join(nltk_data_dir, 'corpora', 'omw-1.4'),
+    ]
+    
+    for file_path in corrupted_files:
+        if os.path.exists(file_path):
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                else:
+                    shutil.rmtree(file_path)
+                print(f"Removed corrupted file: {file_path}")
+            except Exception as e:
+                print(f"Could not remove {file_path}: {e}")
+
 def download_nltk_data():
-    """Download required NLTK data"""
     import nltk
     
     required_nltk_data = [
-        'punkt', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'
+        'punkt', 'punkt_tab', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'
     ]
     
     for data_name in required_nltk_data:
         try:
-            nltk.data.find(f'tokenizers/{data_name}')
-        except LookupError:
+            # Try to find existing data first
+            if data_name in ['punkt', 'punkt_tab']:
+                nltk.data.find(f'tokenizers/{data_name}')
+            elif data_name in ['stopwords', 'wordnet']:
+                nltk.data.find(f'corpora/{data_name}')
+            else:
+                nltk.data.find(f'taggers/{data_name}')
+        except (LookupError, Exception):
             try:
                 nltk.download(data_name, quiet=True)
                 print(f"Downloaded NLTK data: {data_name}")
             except Exception as e:
                 print(f"Failed to download {data_name}: {e}")
+                # Continue with other downloads even if one fails
+                continue
 
 def setup_environment():
-    """Setup the complete environment"""
     print("Setting up Resume Scoring Agent environment...")
     
-    # Setup logging
-    setup_logging()
+    # Clean corrupted NLTK data first
+    try:
+        clean_corrupted_nltk_data()
+    except Exception as e:
+        print(f"Warning: Could not clean NLTK data: {e}")
     
-    # Ensure directories exist
+    setup_logging()
     ensure_directories()
     print("✓ Directories created")
     
-    # Check dependencies
     missing = check_dependencies()
     if missing:
         print(f"⚠️  Missing packages: {', '.join(missing)}")
@@ -126,7 +150,6 @@ def setup_environment():
     else:
         print("✓ All dependencies installed")
     
-    # Download NLTK data
     try:
         download_nltk_data()
         print("✓ NLTK data downloaded")
